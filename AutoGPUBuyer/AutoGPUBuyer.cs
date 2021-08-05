@@ -9,30 +9,29 @@ namespace AutoGPUBuyer
     {
         static void Main(string[] args)
         {
-            IWebDriver driver = new ChromeDriver(@"C:\AutoGPUBuyer\AutoGPUBuyer\AutoGPUBuyer\Drivers\");
+            Environment.SetEnvironmentVariable("webdriver.chrome.driver", @"C:\AutoGPUBuyer\AutoGPUBuyer\AutoGPUBuyer\Drivers\");
             ChromeOptions options = new ChromeOptions();
             options.AddArgument("start-maximized");
             options.AddExcludedArgument("enable-automation");
             options.AddAdditionalCapability("useAutomationExtension", false);
-            driver = new ChromeDriver(options);
+            IWebDriver driver = new ChromeDriver(options);
 
-            verificationCode(driver);
-
-/*            String url = "https://www.bestbuy.com/site/gigabyte-amd-radeon-rx-6700-xt-gaming-oc-12gb-gddr6-pci-express-4-0-gaming-graphics-card/6457993.p?skuId=6457993";
+            String url = "https://www.bestbuy.com/site/gigabyte-amd-radeon-rx-6700-xt-gaming-oc-12gb-gddr6-pci-express-4-0-gaming-graphics-card/6457993.p?skuId=6457993";
             String xpath = "//*[text()='Add to Cart']";
 
             driver.Url = (url);
             if (isInStock(driver, xpath))
             {
-                if(buy(driver))
+                if (buy(driver))
                 {
                     driver.Close();
                     //System.exit(0);
                 }
-            } else
+            }
+            else
             {
                 driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
-            }*/
+            }
         }
 
         static bool isInStock(IWebDriver driver, String xpath)
@@ -104,14 +103,29 @@ namespace AutoGPUBuyer
 
         static void verificationCode(IWebDriver driver)
         {
-            String url = "https://www.gmail.com";
+            String url = "https://outlook.office.com/mail/";
             driver.Url = (url);
 
-            String xpath = "//*[@id='identifierId']";
-            IWebElement element = driver.FindElement(By.XPath(xpath));
-            element.SendKeys("email");
+            //optimize this later
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
 
-            xpath = "//*[text()='Next']";
+            String xpath = "//*[@id='i0116']";
+            IWebElement element = driver.FindElement(By.XPath(xpath));
+            element.SendKeys(" ");
+
+            xpath = "//*[@id='idSIButton9']";
+            element = driver.FindElement(By.XPath(xpath));
+            element.Click();
+
+            xpath = "//*[@id='username']";
+            element = driver.FindElement(By.XPath(xpath));
+            element.SendKeys(" ");
+
+            xpath = "//*[@id='password']";
+            element = driver.FindElement(By.XPath(xpath));
+            element.SendKeys(" ");
+
+            xpath = "//*[text()='Submit ']";
             element = driver.FindElement(By.XPath(xpath));
             element.Click();
         }
