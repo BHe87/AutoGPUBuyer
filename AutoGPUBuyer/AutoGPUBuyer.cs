@@ -10,7 +10,15 @@ namespace AutoGPUBuyer
         static void Main(string[] args)
         {
             IWebDriver driver = new ChromeDriver(@"C:\AutoGPUBuyer\AutoGPUBuyer\AutoGPUBuyer\Drivers\");
-            String url = "https://www.bestbuy.com/site/gigabyte-amd-radeon-rx-6700-xt-gaming-oc-12gb-gddr6-pci-express-4-0-gaming-graphics-card/6457993.p?skuId=6457993";
+            ChromeOptions options = new ChromeOptions();
+            options.AddArgument("start-maximized");
+            options.AddExcludedArgument("enable-automation");
+            options.AddAdditionalCapability("useAutomationExtension", false);
+            driver = new ChromeDriver(options);
+
+            verificationCode(driver);
+
+/*            String url = "https://www.bestbuy.com/site/gigabyte-amd-radeon-rx-6700-xt-gaming-oc-12gb-gddr6-pci-express-4-0-gaming-graphics-card/6457993.p?skuId=6457993";
             String xpath = "//*[text()='Add to Cart']";
 
             driver.Url = (url);
@@ -24,7 +32,7 @@ namespace AutoGPUBuyer
             } else
             {
                 driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
-            }
+            }*/
         }
 
         static bool isInStock(IWebDriver driver, String xpath)
@@ -36,6 +44,8 @@ namespace AutoGPUBuyer
         {
             addToCart(driver);
             checkout(driver);
+            signin(driver);
+            verificationCode(driver);
             inputShippingInfo(driver);
             inputPaymentInfo(driver);
             placeOrder(driver);
@@ -55,8 +65,15 @@ namespace AutoGPUBuyer
             element.Click();
 
             //radio button to opt into shipping instead of pickup
-            xpath = "/html/body/div[1]/main/div/div[2]/div[1]/div/div[1]/div[1]/section[1]/div[4]/ul/li/section/div[2]/div[2]/form/div[2]/fieldset/div[2]/div[1]/div/div/div/input";
-            element = driver.FindElement(By.XPath(xpath));
+            String xpath1 = "/html/body/div[1]/main/div/div[2]/div[1]/div/div[1]/div[1]/section[1]/div[4]/ul/li/section/div[2]/div[2]/form/div[2]/fieldset/div[2]/div[1]/div/div/div/input";
+            String xpath2 = "/html/body/div[1]/main/div/div[2]/div[1]/div/div[1]/div[1]/section[1]/div[4]/ul/li/section/div[2]/div[2]/form/div[3]/fieldset/div[2]/div[1]/div/div/div/input";
+            try
+            {
+                element = driver.FindElement(By.XPath(xpath1));
+            } catch (NoSuchElementException e)
+            {
+                element = driver.FindElement(By.XPath(xpath2));
+            }
             element.Click();
         }
 
@@ -64,6 +81,38 @@ namespace AutoGPUBuyer
         {
             String xpath = "//*[text()='Checkout']";
             IWebElement element = driver.FindElement(By.XPath(xpath));
+            element.Click();
+        }
+
+        static void signin(IWebDriver driver)
+        {
+            //optimize this later
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+
+            String xpath = "//input[contains(@id, 'fld-e')]";
+            IWebElement element = driver.FindElement(By.XPath(xpath));
+            element.SendKeys("email");
+
+            xpath = "//input[contains(@id, 'fld-p1')]";
+            element = driver.FindElement(By.XPath(xpath));
+            element.SendKeys("password");
+
+            xpath = "//*[text()='Sign In']";
+            element = driver.FindElement(By.XPath(xpath));
+            element.Click();
+        }
+
+        static void verificationCode(IWebDriver driver)
+        {
+            String url = "https://www.gmail.com";
+            driver.Url = (url);
+
+            String xpath = "//*[@id='identifierId']";
+            IWebElement element = driver.FindElement(By.XPath(xpath));
+            element.SendKeys("email");
+
+            xpath = "//*[text()='Next']";
+            element = driver.FindElement(By.XPath(xpath));
             element.Click();
         }
 
